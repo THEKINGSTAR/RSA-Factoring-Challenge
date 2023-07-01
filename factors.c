@@ -1,10 +1,16 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
+#include <string.h>
+#include <time.h>
+#include <wchar.h>
+#include <unistd.h>
+#include <gmp.h>
 
 /*getline(&buffer,&size,stdin);*/
 
-void primeFactors(int n);
+void primeFactors(ssize_t n);
 
 /* void primeFactors(int n);*/
 /**
@@ -20,11 +26,12 @@ int main(int argc, char **argv)
 {
 	FILE *file;
 	char *line = NULL;
-	size_t len = 1024;
-	long long nread;
+	size_t len;
+	ssize_t nread;
 
 
-	long long numb;
+	mpz_t numb;
+	mpz_init(numb);
 
 	if (argc != 2)
 	{
@@ -42,14 +49,16 @@ int main(int argc, char **argv)
 	{
 		/* printf("Read line of lenght %lld: %s\n", nread, line);*/
 
-		numb = atoi(line);
-		/*printf("numb is %lld\n", numb);*/
+		/*numb = atoi(line);*/
+		mpz_set_str(numb, line, len);
+		gmp_printf("numb is  %Zd\n", numb);
+		mpz_clear(numb);
 		/*
 		 * ldiv_t result = ldiv(numb, 2);
 		 * printf("Quotient: %ld\n", result.quot);
 		 * printf("Remainder: %ld\n", result.rem);
 		 */
-		primeFactors(numb);
+		/*primeFactors(numb);*/
 		/* fwrite(line, nread, 1, stdout);*/
 	}
 	free(line);
@@ -65,11 +74,12 @@ int main(int argc, char **argv)
  * @n: input number
  * Return: no return value
  */
-void primeFactors(int n)
+
+void primeFactors(ssize_t n)
 {
-	int in_num = n;
-	int c = 2;
-	int dom = 1, num = 1;
+	ssize_t in_num = n;
+	ssize_t c = 2;
+	ssize_t dom = 1, num = 1;
 
 
 	/*printf("NUM IN %i\n",in_num);*/
@@ -87,8 +97,8 @@ void primeFactors(int n)
 	}
 	num = c;
 	/*printf("\nPrime Facturization: %i, %i ,%i \n\n", in_num, dom, num);*/
-	if (dom > num)
-		printf("%i=%i*%i\n", in_num, dom, num);
+	if (dom >= num)
+		printf("%li=%li*%li\n", in_num, dom, num);
 	if (dom < num)
-		printf("%i=%i*%i\n", in_num, num, dom);
+		printf("%li=%li*%li\n", in_num, num, dom);
 }
